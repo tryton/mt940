@@ -29,7 +29,7 @@
 """a parser for MT940 files
 """
 __version__ = '0.1'
-__all__ = ['MT940']
+__all__ = ['MT940', 'rabo_description']
 
 from collections import namedtuple, defaultdict
 from decimal import Decimal
@@ -150,3 +150,38 @@ Statement = namedtuple('Statement', ['statement', 'account', 'information',
 Balance = namedtuple('Balance', ['date', 'amount', 'currency'])
 Transaction = namedtuple('Transaction', ['date', 'booking', 'amount', 'id',
         'reference', 'account', 'description'])
+
+
+RABO_TAGS = [
+    ('/MARF/', 'marf'),
+    ('/EREF/', 'eref'),
+    ('/PREF/', 'pref'),
+    ('/BENM/', 'benm'),
+    ('/ORDP/', 'ordp'),
+    ('/NAME/', 'name'),
+    ('/ID/', 'id'),
+    ('/ADDR/', 'addr'),
+    ('/REMI/', 'remi'),
+    ('/CDTRREFTP//CD/SCOR/ISSR/CUR/CDTRREF/', 'cdtrref'),
+    ('/CSID/', 'csid'),
+    ('/ISDT/', 'isdt'),
+    ('/RTRN/', 'rtrn'),
+    ]
+
+
+def rabo_description(description):
+    "Return dictionnary with Rabo informations"
+    description = ''.join(description.splitlines())
+    values = {}
+    for tag, name in RABO_TAGS:
+        if description.startswith(tag):
+            description = description[len(tag):]
+            try:
+                i = description.index('/')
+            except ValueError:
+                i = len(description)
+            values[name] = description[:i]
+            description = description[i:]
+        if not description:
+            break
+    return values

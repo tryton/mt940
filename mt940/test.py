@@ -34,7 +34,7 @@ import datetime
 from decimal import Decimal
 
 here = os.path.dirname(__file__)
-from mt940 import MT940
+from mt940 import MT940, rabo_description
 
 
 class TestMT940(unittest.TestCase):
@@ -81,6 +81,26 @@ class TestMT940(unittest.TestCase):
             '''/TRTP/SEPA OVERBOEKING/IBAN/FR12345678901234/BIC/GEFRADAM
 /NAME/QASD JGRED/REMI/Dit zijn de omschrijvingsregels/EREF/NOTPRO
 VIDED''')
+
+
+class TestRaboDescription(unittest.TestCase):
+
+    def test_one_tag(self):
+        self.assertEqual(rabo_description('/EREF/foo'), {'eref': 'foo'})
+
+    def test_empty_tags(self):
+        self.assertEqual(rabo_description('/BENM//NAME/Doe'),
+            {'benm': '', 'name': 'Doe'})
+
+    def test_long_tags(self):
+        self.assertEqual(rabo_description(
+                '/ORDP//NAME/Doe/REMI//CDTRREFTP//CD/SCOR/ISSR/CUR/CDTRREF/'
+                '12345'
+                )['cdtrref'], '12345')
+
+    def test_non_rabo(self):
+        self.assertEqual(rabo_description('foo'), {})
+        self.assertEqual(rabo_description('/FOO/BAR/NAME/'), {})
 
 if __name__ == '__main__':
     unittest.main()
