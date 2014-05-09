@@ -29,7 +29,7 @@
 """a parser for MT940 files
 """
 __version__ = '0.1'
-__all__ = ['MT940', 'rabo_description']
+__all__ = ['MT940', 'rabo_description', 'abn_amro_description']
 
 from collections import namedtuple, defaultdict
 from decimal import Decimal
@@ -152,6 +152,21 @@ Transaction = namedtuple('Transaction', ['date', 'booking', 'amount', 'id',
         'reference', 'account', 'description'])
 
 
+def _find_swift_tags(tags, description):
+    values = {}
+    for tag, name in tags:
+        if description.startswith(tag):
+            description = description[len(tag):]
+            try:
+                i = description.index('/')
+            except ValueError:
+                i = len(description)
+            values[name] = description[:i]
+            description = description[i:]
+        if not description:
+            break
+    return values
+
 RABO_TAGS = [
     ('/MARF/', 'marf'),
     ('/EREF/', 'eref'),
@@ -172,16 +187,35 @@ RABO_TAGS = [
 def rabo_description(description):
     "Return dictionnary with Rabo informations"
     description = ''.join(description.splitlines())
+    return _find_swift_tags(RABO_TAGS, description)
+
+
+ABN_AMRO_ACCOUNT = re.compile(r"""
+    ^([0-9]{1,3}\.[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,3})""", re.VERBOSE)
+ABN_AMRO_GIRO = re.compile(r"""
+    ^GIRO\ +([0-9]+)""", re.VERBOSE)
+ABN_AMRO_TAGS = [
+    ('/TRTP/', 'trtp'),
+    ('/IBAN/', 'iban'),
+    ('/BIC/', 'bic'),
+    ('/CSID', 'csid'),
+    ('/NAME/', 'name'),
+    ('/REMI/', 'remi'),
+    ('/EREF/', 'eref'),
+    ('/ORDP//ID/', 'ordp'),
+    ('/BENM//ID/', 'benm'),
+    ]
+
+
+def abn_amro_description(description):
+    "Retrun dictionnary with ABN AMRO informations"
+    description = ''.join(description.splitlines())
     values = {}
-    for tag, name in RABO_TAGS:
-        if description.startswith(tag):
-            description = description[len(tag):]
-            try:
-                i = description.index('/')
-            except ValueError:
-                i = len(description)
-            values[name] = description[:i]
-            description = description[i:]
-        if not description:
-            break
+    m = ABN_AMRO_ACCOUNT.match(description)
+    if m:
+        values['account'] = m.group(1).replace('.', '')
+    m = ABN_AMRO_GIRO.match(description)
+    if m:
+        values['account'] = m.group(1)
+    values.update(_find_swift_tags(ABN_AMRO_TAGS, description))
     return values

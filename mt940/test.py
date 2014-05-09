@@ -34,7 +34,7 @@ import datetime
 from decimal import Decimal
 
 here = os.path.dirname(__file__)
-from mt940 import MT940, rabo_description
+from mt940 import MT940, rabo_description, abn_amro_description
 
 
 class TestMT940(unittest.TestCase):
@@ -100,6 +100,32 @@ class TestRaboDescription(unittest.TestCase):
 
     def test_non_rabo(self):
         self.assertEqual(rabo_description('foo'), {})
+        self.assertEqual(rabo_description('/FOO/BAR/NAME/'), {})
+
+
+class TestABNAMRODescription(unittest.TestCase):
+
+    def test_account(self):
+        self.assertEqual(abn_amro_description('12.34.56.789 John Doe'),
+            {'account': '123456789'})
+
+    def test_giro(self):
+        self.assertEqual(abn_amro_description('GIRO 4090309'),
+            {'account': '4090309'})
+
+    def test_tag(self):
+        self.assertEqual(abn_amro_description(
+                '''/TRTP/SEPA OVERBOEKING/IBAN/FR001234567890/BIC/GEF
+RADAM/NAME/ENERGIE BEDRIJF/EREF/NOTPROVIDED'''), {
+                'trtp': 'SEPA OVERBOEKING',
+                'iban': 'FR001234567890',
+                'bic': 'GEFRADAM',
+                'name': 'ENERGIE BEDRIJF',
+                'eref': 'NOTPROVIDED',
+                })
+
+    def test_non_abn_amro(self):
+        self.assertEqual(abn_amro_description('foo'), {})
         self.assertEqual(rabo_description('/FOO/BAR/NAME/'), {})
 
 if __name__ == '__main__':
