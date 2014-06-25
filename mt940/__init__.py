@@ -28,7 +28,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """a parser for MT940 files
 """
-__version__ = '0.1'
+__version__ = '0.2'
 __all__ = ['MT940', 'rabo_description', 'abn_amro_description']
 
 from collections import namedtuple, defaultdict
