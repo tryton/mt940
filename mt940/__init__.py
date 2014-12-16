@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013, Cédric Krier
-# Copyright (c) 2013, B2CK
+# Copyright (c) 2014, Nicolas Évrard
+# Copyright (c) 2013-2014, B2CK
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,7 +30,8 @@
 """a parser for MT940 files
 """
 __version__ = '0.2'
-__all__ = ['MT940', 'rabo_description', 'abn_amro_description']
+__all__ = ['MT940', 'rabo_description', 'abn_amro_description',
+    'ing_description']
 
 from collections import namedtuple, defaultdict
 from decimal import Decimal
@@ -218,4 +220,49 @@ def abn_amro_description(description):
     if m:
         values['account'] = m.group(1)
     values.update(_find_swift_tags(ABN_AMRO_TAGS, description))
+    return values
+
+ING_TAGS = re.compile(r'/(RTRN|EREF|PREF|MARF|CSID|CNTP|REMI|PURP|ULT[CD])/')
+ING_TAGS_DEFINITION = {
+    'RTRN': ('rtrn', []),
+    'EREF': ('eref', []),
+    'PREF': ('pref', []),
+    'MARF': ('marf', []),
+    'CSID': ('csid', []),
+    'CNTP': ('cntp', ['account_number', 'bic', 'name', 'city']),
+    'REMI': ('remi', ['code', 'issuer', 'remittance_info']),
+    'PURP': ('purp', []),
+    'ULTC': ('ultc', ['name', 'id']),
+    'ULTD': ('ultd', ['name', 'id']),
+    }
+
+
+def ing_description(description):
+    "Return dictionnary with ING informations"
+    description = ''.join(description.splitlines())
+    values = {}
+    ing_tags = iter(ING_TAGS.split(description)[1:])
+    for tag, tag_value in zip(ing_tags, ing_tags):
+        tag_value = tag_value[:-1]
+        name, subfields = ING_TAGS_DEFINITION[tag]
+
+        if not subfields:
+            values[name] = tag_value
+            continue
+
+        values[name] = {}
+        if 'name' in subfields or 'remittance_info' in subfields:
+            special_tag = 'name' if 'name' in subfields else 'remittance_info'
+            tag_idx = subfields.index(special_tag)
+            subtags = tag_value.split('/', tag_idx)
+            for sf_name, sf_value in zip(subfields[:tag_idx], subtags[:-1]):
+                values[name][sf_name] = sf_value
+            subtags = subtags[-1].rsplit('/', len(subfields) - tag_idx - 1)
+            for sf_name, sf_value in zip(subfields[tag_idx:], subtags):
+                values[name][sf_name] = sf_value
+        else:
+            subtags = tag_value.split('/')
+            for sf_name, sf_value in zip(subfields, subtags):
+                values[name][sf_name] = sf_value
+
     return values

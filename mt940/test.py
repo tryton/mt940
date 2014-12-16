@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013, Cédric Krier
-# Copyright (c) 2013, B2CK
+# Copyright (c) 2014, Nicolas Évrard
+# Copyright (c) 2013-2014, B2CK
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +35,8 @@ import datetime
 from decimal import Decimal
 
 here = os.path.dirname(__file__)
-from mt940 import MT940, rabo_description, abn_amro_description
+from mt940 import (MT940, rabo_description, abn_amro_description,
+    ing_description)
 
 
 class TestMT940(unittest.TestCase):
@@ -127,6 +129,33 @@ RADAM/NAME/ENERGIE BEDRIJF/EREF/NOTPROVIDED'''), {
     def test_non_abn_amro(self):
         self.assertEqual(abn_amro_description('foo'), {})
         self.assertEqual(rabo_description('/FOO/BAR/NAME/'), {})
+
+
+class TestINGDescription(unittest.TestCase):
+
+    def test_tag(self):
+        description = """/EREF/170330P40411570.4342.2964442//CNTP/
+NL94RABO0123456789/RABONL2U/ENERGIE BEDRIJF///REMI/USTD//
+170330/REM INFO/"""
+
+        self.assertEqual(ing_description(description), {
+                'eref': '170330P40411570.4342.2964442',
+                'cntp': {
+                    'account_number': 'NL94RABO0123456789',
+                    'bic': 'RABONL2U',
+                    'name': 'ENERGIE BEDRIJF',
+                    'city': '',
+                    },
+                'remi': {
+                    'code': 'USTD',
+                    'issuer': '',
+                    'remittance_info': '170330/REM INFO',
+                    },
+                })
+
+    def test_non_ing(self):
+        self.assertEqual(ing_description('foo'), {})
+        self.assertEqual(ing_description('/FOO/BAR/NAME/'), {})
 
 if __name__ == '__main__':
     unittest.main()
