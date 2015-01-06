@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013, Cédric Krier
-# Copyright (c) 2014, Nicolas Évrard
-# Copyright (c) 2013-2014, B2CK
+# Copyright (c) 2014-2015, Nicolas Évrard
+# Copyright (c) 2013-2015, B2CK
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -76,76 +76,80 @@ class MT940(object):
     def __init__(self, name):
         self.statements = []
 
-        def readline(f):
-            buf = []
-            for line in f:
-                line = line.strip('\n')
-                if buf:
-                    if (line.startswith(':')
-                            or line.startswith('-')):
-                        yield '\n'.join(buf)
-                        del buf[:]
-                buf.append(line)
-            if buf:
-                yield '\n'.join(buf)
-
-        def set_statement(values, transactions):
-            self.statements.append(
-                Statement(
-                    transactions=[Transaction(*t) for t in transactions],
-                    **values))
-            values.clear()
-            del transactions[:]
-
-        def get_balance(balance):
-            date = _parse_date(balance[1:7])
-            amount = _parse_amount(balance[10:], balance[0])
-            return Balance(date=date, amount=amount, currency=balance[7:10])
-
-        def get_transaction(transaction):
-            lines = transaction.splitlines()
-            if len(lines) == 1:
-                transaction, = lines
-                account = None
-            else:
-                transaction, account = lines
-            transaction = TRANSACTION_RE.match(transaction)
-            date = _parse_date(transaction.group('date'))
-            if transaction.group('booking'):
-                booking = _parse_date(
-                    transaction.group('date')[:2]
-                    + transaction.group('booking'))
-            else:
-                booking = None
-            amount = _parse_amount(transaction.group('amount'),
-                transaction.group('sign'))
-            id_ = transaction.group('id')
-            reference = transaction.group('reference')
-            return (date, booking, amount, id_, reference, account, '')
-
         with open(name, 'rU') as f:
             values = defaultdict(str)
             transactions = []
-            for line in readline(f):
+            for line in self._readline(f):
                 for name, sections in SECTIONS.iteritems():
                     if name == 'begin':
                         continue
                     for section in sections:
                         if line.startswith(section):
                             if name in values and name == 'statement':
-                                set_statement(values, transactions)
+                                self._set_statement(values, transactions)
                             if name.endswith('_balance'):
-                                values[name] = get_balance(line[len(section):])
+                                values[name] = self._get_balance(
+                                    line[len(section):])
                             elif name == 'transaction':
                                 transactions.append(
-                                    get_transaction(line[len(section):]))
+                                    self._get_transaction(line[len(section):]))
                             elif name == 'description':
                                 transactions[-1] = (transactions[-1][:-1]
                                     + (line[len(section):],))
                             else:
                                 values[name] += line[len(section):]
             if values:
-                set_statement(values, transactions)
+                self._set_statement(values, transactions)
+
+    @staticmethod
+    def _readline(f):
+        buf = []
+        for line in f:
+            line = line.strip('\n')
+            if buf:
+                if (line.startswith(':')
+                        or line.startswith('-')):
+                    yield '\n'.join(buf)
+                    del buf[:]
+            buf.append(line)
+        if buf:
+            yield '\n'.join(buf)
+
+    @staticmethod
+    def _get_balance(balance):
+        date = _parse_date(balance[1:7])
+        amount = _parse_amount(balance[10:], balance[0])
+        return Balance(date=date, amount=amount, currency=balance[7:10])
+
+    @staticmethod
+    def _get_transaction(transaction):
+        lines = transaction.splitlines()
+        if len(lines) == 1:
+            transaction, = lines
+            account = None
+        else:
+            transaction, account = lines
+        transaction = TRANSACTION_RE.match(transaction)
+        date = _parse_date(transaction.group('date'))
+        if transaction.group('booking'):
+            booking = _parse_date(
+                transaction.group('date')[:2]
+                + transaction.group('booking'))
+        else:
+            booking = None
+        amount = _parse_amount(transaction.group('amount'),
+            transaction.group('sign'))
+        id_ = transaction.group('id')
+        reference = transaction.group('reference')
+        return (date, booking, amount, id_, reference, account, '')
+
+    def _set_statement(self, values, transactions):
+        self.statements.append(
+            Statement(
+                transactions=[Transaction(*t) for t in transactions],
+                **values))
+        values.clear()
+        del transactions[:]
 
 Statement = namedtuple('Statement', ['statement', 'account', 'information',
         'start_balance', 'transactions', 'end_balance'])
