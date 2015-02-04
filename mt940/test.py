@@ -72,17 +72,37 @@ class TestMT940(unittest.TestCase):
 
     def test_transaction(self):
         "Test transaction"
-        transaction, = self.mt940.statements[0].transactions
+        transaction = self.mt940.statements[0].transactions[0]
         self.assertEqual(transaction.date, datetime.date(2012, 5, 12))
         self.assertEqual(transaction.booking, datetime.date(2012, 5, 14))
         self.assertEqual(transaction.amount, Decimal('500.01'))
         self.assertEqual(transaction.id, 'N654')
         self.assertEqual(transaction.reference, 'NONREF')
-        self.assertEqual(transaction.account, '987654321')
+        self.assertEqual(transaction.additional_data, '987654321')
         self.assertEqual(transaction.description,
             '''/TRTP/SEPA OVERBOEKING/IBAN/FR12345678901234/BIC/GEFRADAM
 /NAME/QASD JGRED/REMI/Dit zijn de omschrijvingsregels/EREF/NOTPRO
 VIDED''')
+
+        transaction = self.mt940.statements[0].transactions[1]
+        self.assertEqual(transaction.date, datetime.date(2014, 12, 5))
+        self.assertEqual(transaction.booking, datetime.date(2014, 12, 5))
+        self.assertEqual(transaction.amount, Decimal('-15.67'))
+        self.assertEqual(transaction.id, 'IDXX')
+        self.assertEqual(transaction.reference, 'REF'),
+        self.assertEqual(transaction.institution_reference, '')
+        self.assertEqual(transaction.additional_data, 'DATA')
+        self.assertEqual(transaction.description, '')
+
+        transaction = self.mt940.statements[0].transactions[2]
+        self.assertEqual(transaction.date, datetime.date(2017, 12, 14))
+        self.assertEqual(transaction.booking, None)
+        self.assertEqual(transaction.amount, Decimal('15.67'))
+        self.assertEqual(transaction.id, 'TIDX')
+        self.assertEqual(transaction.reference, 'TEST'),
+        self.assertEqual(transaction.institution_reference, 'REFERENCE')
+        self.assertEqual(transaction.additional_data, None)
+        self.assertEqual(transaction.description, '')
 
 
 class TestRaboDescription(unittest.TestCase):

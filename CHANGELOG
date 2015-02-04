@@ -1,3 +1,4 @@
+* Renamed properties of Transaction to follow the norm
 * Add support for ING specific description format
 
 Version 0.1 - 2014-06-25

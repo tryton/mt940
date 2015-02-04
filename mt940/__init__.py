@@ -57,18 +57,18 @@ def _parse_date(date):
 
 def _parse_amount(amount, sign='C'):
     amount = Decimal(amount.replace(',', '.'))
-    if sign == 'D':
+    if sign in ('D', 'RC'):
         return -amount
     return amount
 
 TRANSACTION_RE = re.compile(r"""
     (?P<date>\d{6})
-    (?P<booking>\d{0,4})
-    (?P<sign>(D|C))
-    (?P<code>\D?)
+    (?P<booking>\d{4})?
+    (?P<sign>D|C|RC|RD)
+    (?P<code>\w)??  # ING skips this mandatory field
     (?P<amount>(\d|,){1,15})
-    (?P<id>\D.{3})
-    (?P<reference>.{0,16})""", re.VERBOSE)
+    (?P<id>\w{4})
+    (?P<reference>.{0,34})""", re.VERBOSE)
 
 
 class MT940(object):
@@ -126,9 +126,9 @@ class MT940(object):
         lines = transaction.splitlines()
         if len(lines) == 1:
             transaction, = lines
-            account = None
+            additional_data = None
         else:
-            transaction, account = lines
+            transaction, additional_data = lines
         transaction = TRANSACTION_RE.match(transaction)
         date = _parse_date(transaction.group('date'))
         if transaction.group('booking'):
@@ -141,7 +141,9 @@ class MT940(object):
             transaction.group('sign'))
         id_ = transaction.group('id')
         reference = transaction.group('reference')
-        return (date, booking, amount, id_, reference, account, '')
+        reference, _, institution_reference = reference.partition('//')
+        return (date, booking, amount, id_, reference,
+            institution_reference, additional_data, '')
 
     def _set_statement(self, values, transactions):
         self.statements.append(
@@ -155,7 +157,8 @@ Statement = namedtuple('Statement', ['statement', 'account', 'information',
         'start_balance', 'transactions', 'end_balance'])
 Balance = namedtuple('Balance', ['date', 'amount', 'currency'])
 Transaction = namedtuple('Transaction', ['date', 'booking', 'amount', 'id',
-        'reference', 'account', 'description'])
+        'reference', 'institution_reference', 'additional_data',
+        'description'])
 
 
 def _find_swift_tags(tags, description):
