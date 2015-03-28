@@ -58,3 +58,7 @@ The transactions::
     '987654321'
     >>> transaction.description # doctest: +NORMALIZE_WHITESPACE
     '/TRTP/SEPA OVERBOEKING/IBAN/FR12345678901234/BIC/GEFRADAM\n/NAME/QASD JGRED/REMI/Dit zijn de omschrijvingsregels/EREF/NOTPRO\nVIDED'
+
+To report issues please visit the `mt940 bugtracker`_.
+
+.. _mt940 bugtracker: http://mt940.b2ck.com/

@@ -41,9 +41,9 @@ def get_version():
 
 setup(name='mt940',
     version=get_version(),
-    author='Cédric Krier',
-    author_email='cedric.krier@b2ck.com',
-    url='http://code.google.com/p/mt940/',
+    author='B2CK',
+    author_email='info@b2ck.com',
+    url='http://mt940.b2ck.com/',
     description='A module to parse MT940 files',
     long_description=read('README'),
     packages=find_packages(),
