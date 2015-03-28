@@ -70,6 +70,9 @@ class TestMT940(unittest.TestCase):
         self.assertEqual(end_balance.amount, Decimal('5638.62'))
         self.assertEqual(end_balance.currency, 'EUR')
 
+    def test_statement_description(self):
+        self.assertEqual(self.mt940.statements[0].description, '/SUM/')
+
     def test_transaction(self):
         "Test transaction"
         transaction = self.mt940.statements[0].transactions[0]

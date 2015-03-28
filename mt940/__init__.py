@@ -78,6 +78,8 @@ class MT940(object):
 
         with open(name, 'rU') as f:
             values = defaultdict(str)
+            # Set optional values
+            values['description']
             transactions = []
             for line in self._readline(f):
                 for name, sections in SECTIONS.iteritems():
@@ -94,8 +96,12 @@ class MT940(object):
                                 transactions.append(
                                     self._get_transaction(line[len(section):]))
                             elif name == 'description':
-                                transactions[-1] = (transactions[-1][:-1]
-                                    + (line[len(section):],))
+                                description = line[len(section):]
+                                if 'end_balance' in values:
+                                    values['description'] += description
+                                else:
+                                    transactions[-1] = (transactions[-1][:-1]
+                                        + (description,))
                             else:
                                 values[name] += line[len(section):]
             if values:
@@ -154,7 +160,7 @@ class MT940(object):
         del transactions[:]
 
 Statement = namedtuple('Statement', ['statement', 'account', 'information',
-        'start_balance', 'transactions', 'end_balance'])
+        'start_balance', 'transactions', 'end_balance', 'description'])
 Balance = namedtuple('Balance', ['date', 'amount', 'currency'])
 Transaction = namedtuple('Transaction', ['date', 'booking', 'amount', 'id',
         'reference', 'institution_reference', 'additional_data',
