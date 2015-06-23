@@ -46,7 +46,7 @@ class TestMT940(unittest.TestCase):
 
     def test_number_statements(self):
         "Test number of statements"
-        self.assertEqual(len(self.mt940.statements), 1)
+        self.assertEqual(len(self.mt940.statements), 2)
 
     def test_statement_account(self):
         "Test statement account"

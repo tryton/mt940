@@ -157,6 +157,7 @@ class MT940(object):
                 transactions=[Transaction(*t) for t in transactions],
                 **values))
         values.clear()
+        values['description']
         del transactions[:]
 
 Statement = namedtuple('Statement', ['statement', 'account', 'information',
