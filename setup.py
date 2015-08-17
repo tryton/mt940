@@ -28,11 +28,13 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import os
 import re
+import codecs
 from setuptools import setup, find_packages
 
 
 def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+    return codecs.open(
+        os.path.join(os.path.dirname(__file__), fname), 'r', 'utf-8').read()
 
 
 def get_version():
