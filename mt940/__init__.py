@@ -201,7 +201,7 @@ RABO_TAGS = [
 
 
 def rabo_description(description):
-    "Return dictionnary with Rabo informations"
+    "Return dictionary with Rabo informations"
     description = ''.join(description.splitlines())
     return _find_swift_tags(RABO_TAGS, description)
 
@@ -224,7 +224,7 @@ ABN_AMRO_TAGS = [
 
 
 def abn_amro_description(description):
-    "Retrun dictionnary with ABN AMRO informations"
+    "Return dictionary with ABN AMRO informations"
     description = ''.join(description.splitlines())
     values = {}
     m = ABN_AMRO_ACCOUNT.match(description)
@@ -252,7 +252,7 @@ ING_TAGS_DEFINITION = {
 
 
 def ing_description(description):
-    "Return dictionnary with ING informations"
+    "Return dictionary with ING informations"
     description = ''.join(description.splitlines())
     values = {}
     ing_tags = iter(ING_TAGS.split(description)[1:])
