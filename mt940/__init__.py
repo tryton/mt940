@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013, Cédric Krier
+# Copyright (c) 2013-2016, Cédric Krier
 # Copyright (c) 2014-2015, Nicolas Évrard
-# Copyright (c) 2013-2015, B2CK
+# Copyright (c) 2013-2016, B2CK
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,7 @@
 """
 __version__ = '0.3'
 __all__ = ['MT940', 'rabo_description', 'abn_amro_description',
-    'ing_description']
+    'ing_description', 'regiobank_description']
 
 from collections import namedtuple, defaultdict
 from decimal import Decimal
@@ -279,4 +279,25 @@ def ing_description(description):
             for sf_name, sf_value in zip(subfields, subtags):
                 values[name][sf_name] = sf_value
 
+    return values
+
+
+def regiobank_description(description):
+    "Return dictionary with RegioBank informations"
+    lines = description.splitlines()
+    values = {}
+    try:
+        first, second, third = lines[0], lines[1], ''.join(lines[2:])
+    except (ValueError, IndexError):
+        return {}
+    try:
+        values['account_number'], values['name'] = first.split(' ', 1)
+    except ValueError:
+        return {}
+    values['address'] = second  # XXX Not clear how to split it
+    if third.startswith('aan %s' % values['name']):
+        _, values['iban'], values['remittance_info'], values['description'] = \
+                third.split(',')
+    else:
+        values['reference'] = third
     return values

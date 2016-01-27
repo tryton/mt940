@@ -36,7 +36,7 @@ from decimal import Decimal
 
 here = os.path.dirname(__file__)
 from mt940 import (MT940, rabo_description, abn_amro_description,
-    ing_description)
+    ing_description, regiobank_description)
 
 
 class TestMT940(unittest.TestCase):
@@ -179,6 +179,43 @@ NL94RABO0123456789/RABONL2U/ENERGIE BEDRIJF///REMI/USTD//
     def test_non_ing(self):
         self.assertEqual(ing_description('foo'), {})
         self.assertEqual(ing_description('/FOO/BAR/NAME/'), {})
+
+
+class TestRegioBankDescription(unittest.TestCase):
+
+    def test_reference(self):
+        description = """0102792984 jyhhenewr f j k
+
+rgt-test-004"""
+
+        self.assertEqual(regiobank_description(description), {
+                'account_number': '0102792984',
+                'name': 'jyhhenewr f j k',
+                'address': '',
+                'reference': 'rgt-test-004',
+                })
+
+    def test_sepa(self):
+        description = """0707464188 dsfg w van
+
+aan dsfg w van,nl04asnb070746418 8,sct2013021540684000000000004,
+t est 1"""
+
+        self.assertEqual(regiobank_description(description), {
+                'account_number': '0707464188',
+                'name': 'dsfg w van',
+                'address': '',
+                'iban': 'nl04asnb070746418 8',
+                'remittance_info': 'sct2013021540684000000000004',
+                'description': 't est 1',
+                })
+
+    def test_non_regiobank(self):
+        self.assertEqual(regiobank_description('foo'), {})
+        description = """foo
+bar
+test"""
+        self.assertEqual(regiobank_description(description), {})
 
 if __name__ == '__main__':
     unittest.main()
