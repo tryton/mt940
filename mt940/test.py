@@ -127,6 +127,16 @@ class TestRaboDescription(unittest.TestCase):
         self.assertEqual(rabo_description('foo'), {})
         self.assertEqual(rabo_description('/FOO/BAR/NAME/'), {})
 
+    def test_mixed_tags(self):
+        self.assertEqual(
+            rabo_description(
+                '/EREF/0007301960/ORDP//NAME/Acist Europe B.V./ADDR/'
+                'Heerlen 6422 PH Heerlen NL/REMI//INV/16000291 29.7.2016'),
+            {'eref': '0007301960', 'ordp': '',
+                'name': 'Acist Europe B.V.',
+                'addr': 'Heerlen 6422 PH Heerlen NL',
+                'remi': '/INV/16000291 29.7.2016'})
+
 
 class TestABNAMRODescription(unittest.TestCase):
 

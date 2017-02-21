@@ -173,12 +173,17 @@ def _find_swift_tags(tags, description):
     for tag, name in tags:
         if description.startswith(tag):
             description = description[len(tag):]
-            try:
-                i = description.index('/')
-            except ValueError:
-                i = len(description)
-            values[name] = description[:i]
-            description = description[i:]
+            cursor = len(description)
+            for next_tag, _ in tags:
+                if next_tag in values or next_tag == tag:
+                    continue
+                index = description.find(next_tag)
+                if index == -1:
+                    continue
+                cursor = min(cursor, index)
+            next_tag_index = cursor
+            values[name] = description[:next_tag_index]
+            description = description[next_tag_index:]
         if not description:
             break
     return values
