@@ -1,3 +1,6 @@
+* Allow to use file-like object
+* Allow to define file encoding
+
 Version 0.3 - 2016-01-27
 * Add support for RegioBank description format
 * Set a default description after setting a statement

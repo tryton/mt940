@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013-2016, Cédric Krier
-# Copyright (c) 2014-2015, Nicolas Évrard
-# Copyright (c) 2013-2016, B2CK
+# Copyright (c) 2014-2017, Nicolas Évrard
+# Copyright (c) 2013-2017, B2CK
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@ from collections import namedtuple, defaultdict
 from decimal import Decimal
 import datetime
 import re
+import io
 
 
 SECTIONS = {
@@ -73,39 +74,45 @@ TRANSACTION_RE = re.compile(r"""
 
 class MT940(object):
 
-    def __init__(self, name):
+    def __init__(self, name, encoding=None):
         self.statements = []
 
-        with open(name, 'rU') as f:
-            values = defaultdict(str)
-            # Set optional values
-            values['description']
-            transactions = []
-            for line in self._readline(f):
-                for name, sections in SECTIONS.iteritems():
-                    if name == 'begin':
-                        continue
-                    for section in sections:
-                        if line.startswith(section):
-                            if name in values and name == 'statement':
-                                self._set_statement(values, transactions)
-                            if name.endswith('_balance'):
-                                values[name] = self._get_balance(
-                                    line[len(section):])
-                            elif name == 'transaction':
-                                transactions.append(
-                                    self._get_transaction(line[len(section):]))
-                            elif name == 'description':
-                                description = line[len(section):]
-                                if 'end_balance' in values:
-                                    values['description'] += description
-                                else:
-                                    transactions[-1] = (transactions[-1][:-1]
-                                        + (description,))
+        if isinstance(name, (bytes, basestring)):
+            with io.open(name, encoding=encoding, mode='r') as f:
+                self._parse(f)
+        else:
+            self._parse(name)
+
+    def _parse(self, f):
+        values = defaultdict(str)
+        # Set optional values
+        values['description']
+        transactions = []
+        for line in self._readline(f):
+            for name, sections in SECTIONS.iteritems():
+                if name == 'begin':
+                    continue
+                for section in sections:
+                    if line.startswith(section):
+                        if name in values and name == 'statement':
+                            self._set_statement(values, transactions)
+                        if name.endswith('_balance'):
+                            values[name] = self._get_balance(
+                                line[len(section):])
+                        elif name == 'transaction':
+                            transactions.append(
+                                self._get_transaction(line[len(section):]))
+                        elif name == 'description':
+                            description = line[len(section):]
+                            if 'end_balance' in values:
+                                values['description'] += description
                             else:
-                                values[name] += line[len(section):]
-            if values:
-                self._set_statement(values, transactions)
+                                transactions[-1] = (transactions[-1][:-1]
+                                    + (description,))
+                        else:
+                            values[name] += line[len(section):]
+        if values:
+            self._set_statement(values, transactions)
 
     @staticmethod
     def _readline(f):

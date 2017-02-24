@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013, Cédric Krier
-# Copyright (c) 2014, Nicolas Évrard
-# Copyright (c) 2013-2014, B2CK
+# Copyright (c) 2014-2017, Nicolas Évrard
+# Copyright (c) 2013-2017, B2CK
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@
 """Test MT940
 """
 import os
+import io
 import unittest
 import datetime
 from decimal import Decimal
@@ -106,6 +107,13 @@ VIDED''')
         self.assertEqual(transaction.institution_reference, 'REFERENCE')
         self.assertEqual(transaction.additional_data, None)
         self.assertEqual(transaction.description, '')
+
+
+class TestMT940Stream(TestMT940):
+
+    def setUp(self):
+        self.mt940 = MT940(io.open(
+                os.path.join(here, 'MT940.txt'), encoding='ascii'))
 
 
 class TestRaboDescription(unittest.TestCase):
