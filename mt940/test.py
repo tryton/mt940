@@ -29,13 +29,16 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """Test MT940
 """
-import os
-import io
-import unittest
 import datetime
+import doctest
+import io
+import os
+import sys
+import unittest
 from decimal import Decimal
 
 here = os.path.dirname(__file__)
+readme = os.path.normpath(os.path.join(here, '..', 'README'))
 from mt940 import (MT940, rabo_description, abn_amro_description,
     ing_description, regiobank_description)
 
@@ -235,5 +238,27 @@ bar
 test"""
         self.assertEqual(regiobank_description(description), {})
 
+
+def test_suite():
+    suite = additional_tests()
+    loader = unittest.TestLoader()
+    suite.addTests(loader.loadTestsFromTestCase(TestMT940))
+    return suite
+
+
+def additional_tests():
+    suite = unittest.TestSuite()
+    if os.path.isfile(readme):
+        suite.addTest(doctest.DocFileSuite(readme, module_relative=False))
+    return suite
+
+
+def main():
+    suite = test_suite()
+    runner = unittest.TextTestRunner()
+    return runner.run(suite)
+
 if __name__ == '__main__':
-    unittest.main()
+    sys.path.insert(0, os.path.dirname(os.path.dirname(
+                os.path.dirname(os.path.abspath(__file__)))))
+    sys.exit(not main().wasSuccessful())
