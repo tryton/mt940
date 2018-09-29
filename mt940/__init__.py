@@ -61,6 +61,7 @@ def _parse_amount(amount, sign='C'):
         return -amount
     return amount
 
+
 TRANSACTION_RE = re.compile(r"""
     (?P<date>\d{6})
     (?P<booking>\d{4})?
@@ -166,6 +167,7 @@ class MT940(object):
         values['description']
         del transactions[:]
 
+
 Statement = namedtuple('Statement', ['statement', 'account', 'information',
         'start_balance', 'transactions', 'end_balance', 'description'])
 Balance = namedtuple('Balance', ['date', 'amount', 'currency'])
@@ -193,6 +195,7 @@ def _find_swift_tags(tags, description):
         if not description:
             break
     return values
+
 
 RABO_TAGS = [
     ('/MARF/', 'marf'),
@@ -246,6 +249,7 @@ def abn_amro_description(description):
         values['account'] = m.group(1)
     values.update(_find_swift_tags(ABN_AMRO_TAGS, description))
     return values
+
 
 ING_TAGS = re.compile(r'/(RTRN|EREF|PREF|MARF|CSID|CNTP|REMI|PURP|ULT[CD])/')
 ING_TAGS_DEFINITION = {

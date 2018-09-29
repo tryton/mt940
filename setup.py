@@ -41,6 +41,7 @@ def get_version():
     init = read(os.path.join('mt940', '__init__.py'))
     return re.search("__version__ = '([0-9.]*)'", init).group(1)
 
+
 setup(name='mt940',
     version=get_version(),
     author='B2CK',
