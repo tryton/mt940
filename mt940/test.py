@@ -119,6 +119,27 @@ class TestMT940Stream(TestMT940):
                 os.path.join(here, 'MT940.txt'), encoding='ascii'))
 
 
+class TestMT940Optional(unittest.TestCase):
+
+    def setUp(self):
+        self.mt940 = MT940(os.path.join(here, 'MT940-optional.txt'))
+
+    def test_statement_start_balance(self):
+        "Test statement has not start balance"
+        start_balance = self.mt940.statements[0].start_balance
+        self.assertEqual(start_balance, None)
+
+    def test_statement_end_balance(self):
+        "Test statement has no end balance"
+        end_balance = self.mt940.statements[0].end_balance
+        self.assertEqual(end_balance, None)
+
+    def test_statement_description(self):
+        "Test statement has no description"
+        description = self.mt940.statements[0].description
+        self.assertEqual(description, None)
+
+
 class TestRaboDescription(unittest.TestCase):
 
     def test_one_tag(self):

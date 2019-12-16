@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-2016, Cédric Krier
+# Copyright (c) 2013-2018, Cédric Krier
 # Copyright (c) 2014-2017, Nicolas Évrard
-# Copyright (c) 2013-2017, B2CK
+# Copyright (c) 2013-2018, B2CK
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -85,8 +85,6 @@ class MT940(object):
 
     def _parse(self, f):
         values = defaultdict(str)
-        # Set optional values
-        values['description']
         transactions = []
         for line in self._readline(f):
             for name, sections in SECTIONS.iteritems():
@@ -159,12 +157,15 @@ class MT940(object):
             institution_reference, additional_data, '')
 
     def _set_statement(self, values, transactions):
+        # Set optional values
+        values.setdefault('start_balance')
+        values.setdefault('end_balance')
+        values.setdefault('description')
         self.statements.append(
             Statement(
                 transactions=[Transaction(*t) for t in transactions],
                 **values))
         values.clear()
-        values['description']
         del transactions[:]
 
 

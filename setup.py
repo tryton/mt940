@@ -51,7 +51,7 @@ setup(name='mt940',
     long_description=read('README'),
     packages=find_packages(),
     package_data={
-        'mt940': ['MT940.txt'],
+        'mt940': ['MT940.txt', 'MT940-optional.txt'],
         },
     classifiers=[
         'Intended Audience :: Developers',
