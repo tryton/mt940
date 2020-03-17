@@ -38,6 +38,11 @@ import datetime
 import re
 import io
 
+try:
+    basestring
+except NameError:
+    basestring = str
+
 
 SECTIONS = {
     'begin': [':940:'],
