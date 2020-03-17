@@ -202,6 +202,7 @@ RABO_TAGS = [
     ('/MARF/', 'marf'),
     ('/EREF/', 'eref'),
     ('/PREF/', 'pref'),
+    ('/TRCD/', 'trcd'),
     ('/BENM/', 'benm'),
     ('/ORDP/', 'ordp'),
     ('/NAME/', 'name'),
