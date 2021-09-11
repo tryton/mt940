@@ -116,8 +116,8 @@ VIDED''')
 class TestMT940Stream(TestMT940):
 
     def setUp(self):
-        self.mt940 = MT940(io.open(
-                os.path.join(here, 'MT940.txt'), encoding='ascii'))
+        with io.open(os.path.join(here, 'MT940.txt')) as fp:
+            self.mt940 = MT940(fp, encoding='ascii')
 
 
 class TestMT940Optional(unittest.TestCase):
