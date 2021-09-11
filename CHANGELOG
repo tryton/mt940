@@ -1,3 +1,6 @@
+* Remove support for Python older than 3.5
+* Add support for Python 3.9
+
 Version 0.5.0 - 2020-03-29
 * Add support for Python 3.5, 3.6, 3.7, 3.8
 * Do not fail on optional balances

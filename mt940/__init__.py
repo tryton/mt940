@@ -38,11 +38,6 @@ import datetime
 import re
 import io
 
-try:
-    basestring
-except NameError:
-    basestring = str
-
 
 SECTIONS = {
     'begin': [':940:'],
@@ -82,7 +77,7 @@ class MT940(object):
     def __init__(self, name, encoding=None):
         self.statements = []
 
-        if isinstance(name, (bytes, basestring)):
+        if isinstance(name, (bytes, str)):
             with io.open(name, encoding=encoding, mode='r') as f:
                 self._parse(f)
         else:
@@ -92,7 +87,7 @@ class MT940(object):
         values = defaultdict(str)
         transactions = []
         for line in self._readline(f):
-            for name, sections in SECTIONS.iteritems():
+            for name, sections in SECTIONS.items():
                 if name == 'begin':
                     continue
                 for section in sections:

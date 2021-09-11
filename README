@@ -21,23 +21,23 @@ The statements::
     2
     >>> statement = mt940.statements[0]
     >>> statement.account
-    u'123456789'
+    '123456789'
     >>> statement.information
-    u'13501/1'
+    '13501/1'
     >>> start_balance = statement.start_balance
     >>> start_balance.date
     datetime.date(2012, 5, 11)
     >>> start_balance.amount
     Decimal('5138.61')
     >>> start_balance.currency
-    u'EUR'
+    'EUR'
     >>> end_balance = statement.end_balance
     >>> end_balance.date
     datetime.date(2012, 5, 14)
     >>> end_balance.amount
     Decimal('5638.62')
     >>> end_balance.currency
-    u'EUR'
+    'EUR'
 
 The transactions::
 
@@ -51,13 +51,13 @@ The transactions::
     >>> transaction.amount
     Decimal('500.01')
     >>> transaction.id
-    u'N654'
+    'N654'
     >>> transaction.reference
-    u'NONREF'
+    'NONREF'
     >>> transaction.additional_data
-    u'987654321'
+    '987654321'
     >>> transaction.description # doctest: +NORMALIZE_WHITESPACE
-    u'/TRTP/SEPA OVERBOEKING/IBAN/FR12345678901234/BIC/GEFRADAM\n/NAME/QASD JGRED/REMI/Dit zijn de omschrijvingsregels/EREF/NOTPRO\nVIDED'
+    '/TRTP/SEPA OVERBOEKING/IBAN/FR12345678901234/BIC/GEFRADAM\n/NAME/QASD JGRED/REMI/Dit zijn de omschrijvingsregels/EREF/NOTPRO\nVIDED'
 
 To report issues please visit the `mt940 bugtracker`_.
 
