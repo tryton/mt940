@@ -2,7 +2,7 @@
 # this repository contains the full copyright notices and license terms.
 """a parser for MT940 files
 """
-__version__ = '0.6.0'
+__version__ = '0.6.1'
 __all__ = ['MT940', 'rabo_description', 'abn_amro_description',
     'ing_description', 'regiobank_description']
 
