@@ -19,11 +19,18 @@ def get_version():
 
 setup(name='mt940',
     version=get_version(),
-    author='B2CK',
-    author_email='info@b2ck.com',
-    url='http://mt940.b2ck.com/',
     description='A module to parse MT940 files',
     long_description=read('README'),
+    author='Tryton',
+    author_email='foundation@tryton.org',
+    url='https://pypi.org/project/mt940/',
+    download_url='https://downloads.tryton.org/mt940/',
+    project_urls={
+        "Bug Tracker": 'https://bugs.tryton.org/mt940',
+        "Forum": 'https://discuss.tryton.org/tags/mt940',
+        "Source Code": 'https://code.tryton.org/mt940',
+        },
+    keywords='MT940 parser',
     packages=find_packages(),
     package_data={
         'mt940': ['MT940.txt', 'MT940-optional.txt'],
