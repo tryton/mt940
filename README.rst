@@ -61,4 +61,4 @@ The transactions::
 
 To report issues please visit the `mt940 bugtracker`_.
 
-.. _mt940 bugtracker: http://mt940.tryton.org/
+.. _mt940 bugtracker: https://bugs.tryton.org/mt940

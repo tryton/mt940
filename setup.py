@@ -21,7 +21,7 @@ def get_version():
 setup(name='mt940',
     version=get_version(),
     description='A module to parse MT940 files',
-    long_description=read('README'),
+    long_description=read('README.rst'),
     author='Tryton',
     author_email='foundation@tryton.org',
     url='https://pypi.org/project/mt940/',
