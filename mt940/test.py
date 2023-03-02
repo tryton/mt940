@@ -11,8 +11,9 @@ import sys
 import unittest
 from decimal import Decimal
 
-from mt940 import (MT940, rabo_description, abn_amro_description,
-    ing_description, regiobank_description)
+from mt940 import (
+    MT940, abn_amro_description, ing_description, rabo_description,
+    regiobank_description)
 
 here = os.path.dirname(__file__)
 readme = os.path.normpath(os.path.join(here, '..', 'README'))

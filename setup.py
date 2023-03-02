@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # This file is part of mt940.  The COPYRIGHT file at the top level of
 # this repository contains the full copyright notices and license terms.
+import codecs
 import os
 import re
-import codecs
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 
 def read(fname):
