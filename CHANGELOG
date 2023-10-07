@@ -1,3 +1,5 @@
+* Add support to Python 3.10, 3.11, 3.12
+
 Version 0.6.0 - 2021-09-18
 * Remove support for Python older than 3.5
 * Add support for Python 3.9
