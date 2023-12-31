@@ -55,5 +55,4 @@ setup(name='mt940',
         'Topic :: Utilities',
         ],
     license='BSD',
-    test_suite='mt940.test',
     )

@@ -1,13 +1,10 @@
-#!/usr/bin/env python
 # This file is part of mt940.  The COPYRIGHT file at the top level of
 # this repository contains the full copyright notices and license terms.
 """Test MT940
 """
 import datetime
-import doctest
 import io
 import os
-import sys
 import unittest
 from decimal import Decimal
 
@@ -16,7 +13,6 @@ from mt940 import (
     regiobank_description)
 
 here = os.path.dirname(__file__)
-readme = os.path.normpath(os.path.join(here, '..', 'README'))
 
 
 class TestMT940(unittest.TestCase):
@@ -234,29 +230,3 @@ t est 1"""
 bar
 test"""
         self.assertEqual(regiobank_description(description), {})
-
-
-def test_suite():
-    suite = additional_tests()
-    loader = unittest.TestLoader()
-    suite.addTests(loader.loadTestsFromTestCase(TestMT940))
-    return suite
-
-
-def additional_tests():
-    suite = unittest.TestSuite()
-    if os.path.isfile(readme):
-        suite.addTest(doctest.DocFileSuite(readme, module_relative=False))
-    return suite
-
-
-def main():
-    suite = test_suite()
-    runner = unittest.TextTestRunner()
-    return runner.run(suite)
-
-
-if __name__ == '__main__':
-    sys.path.insert(0, os.path.dirname(os.path.dirname(
-                os.path.dirname(os.path.abspath(__file__)))))
-    sys.exit(not main().wasSuccessful())
