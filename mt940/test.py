@@ -112,6 +112,19 @@ class TestMT940Optional(unittest.TestCase):
         self.assertEqual(description, None)
 
 
+class TestMT940Transaction(unittest.TestCase):
+
+    def test_transaction(self):
+        for transaction, result in [
+                ('240325C-50000,00NMSCREV20240325AAAAAAA010O9902538776',
+                    (datetime.date(2024, 3, 25), None, Decimal('-50000.00'),
+                        'NMSC', 'REV20240325AAAAAAA010O9902538776', '', None,
+                        '')),
+                ]:
+            with self.subTest(transaction=transaction):
+                self.assertEqual(MT940._get_transaction(transaction), result)
+
+
 class TestRaboDescription(unittest.TestCase):
 
     def test_one_tag(self):

@@ -40,7 +40,7 @@ TRANSACTION_RE = re.compile(r"""
     (?P<booking>\d{4})?
     (?P<sign>D|C|RC|RD)
     (?P<code>\w)??  # ING skips this mandatory field
-    (?P<amount>(\d|,){1,15})
+    (?P<amount>(-|\d)(\d|,){0,14})
     (?P<id>\w{4})
     (?P<reference>.{0,34})""", re.VERBOSE)
 
