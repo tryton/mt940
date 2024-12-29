@@ -1,5 +1,5 @@
 * Support negative amount
-* Add support to Python 3.10, 3.11, 3.12
+* Add support to Python 3.10, 3.11, 3.12, 3.13
 
 Version 0.6.0 - 2021-09-18
 * Remove support for Python older than 3.5
