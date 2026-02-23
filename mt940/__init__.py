@@ -39,7 +39,7 @@ TRANSACTION_RE = re.compile(r"""
     (?P<date>\d{6})
     (?P<booking>\d{4})?
     (?P<sign>D|C|RC|RD)
-    (?P<code>\w)??  # ING skips this mandatory field
+    (?P<fund_code>\w)??  # ING skips this mandatory field
     (?P<amount>(-|\d)(\d|,){0,14})
     (?P<id>\w{4})
     (?P<reference>.{0,34})""", re.VERBOSE)
@@ -123,10 +123,11 @@ class MT940(object):
             booking = None
         amount = _parse_amount(transaction.group('amount'),
             transaction.group('sign'))
+        fund_code = transaction.group('fund_code')
         id_ = transaction.group('id')
         reference = transaction.group('reference')
         reference, _, institution_reference = reference.partition('//')
-        return (date, booking, amount, id_, reference,
+        return (date, booking, amount, fund_code, id_, reference,
             institution_reference, additional_data, '')
 
     def _set_statement(self, values, transactions):
@@ -145,7 +146,8 @@ class MT940(object):
 Statement = namedtuple('Statement', ['statement', 'account', 'information',
         'start_balance', 'transactions', 'end_balance', 'description'])
 Balance = namedtuple('Balance', ['date', 'amount', 'currency'])
-Transaction = namedtuple('Transaction', ['date', 'booking', 'amount', 'id',
+Transaction = namedtuple(
+    'Transaction', ['date', 'booking', 'amount', 'fund_code', 'id',
         'reference', 'institution_reference', 'additional_data',
         'description'])
 

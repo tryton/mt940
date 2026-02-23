@@ -1,3 +1,5 @@
+* Add fund code to transaction
+
 Version 0.7.0 - 2025-11-24
 * Add support to Python 3.14
 * Support negative amount

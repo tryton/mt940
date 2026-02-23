@@ -55,6 +55,7 @@ class TestMT940(unittest.TestCase):
         self.assertEqual(transaction.date, datetime.date(2012, 5, 12))
         self.assertEqual(transaction.booking, datetime.date(2012, 5, 14))
         self.assertEqual(transaction.amount, Decimal('500.01'))
+        self.assertEqual(transaction.fund_code, None)
         self.assertEqual(transaction.id, 'N654')
         self.assertEqual(transaction.reference, 'NONREF')
         self.assertEqual(transaction.additional_data, '987654321')
@@ -67,6 +68,7 @@ VIDED''')
         self.assertEqual(transaction.date, datetime.date(2014, 12, 5))
         self.assertEqual(transaction.booking, datetime.date(2014, 12, 5))
         self.assertEqual(transaction.amount, Decimal('-15.67'))
+        self.assertEqual(transaction.fund_code, None)
         self.assertEqual(transaction.id, 'IDXX')
         self.assertEqual(transaction.reference, 'REF'),
         self.assertEqual(transaction.institution_reference, '')
@@ -77,6 +79,7 @@ VIDED''')
         self.assertEqual(transaction.date, datetime.date(2017, 12, 14))
         self.assertEqual(transaction.booking, None)
         self.assertEqual(transaction.amount, Decimal('15.67'))
+        self.assertEqual(transaction.fund_code, None)
         self.assertEqual(transaction.id, 'TIDX')
         self.assertEqual(transaction.reference, 'TEST'),
         self.assertEqual(transaction.institution_reference, 'REFERENCE')
@@ -118,8 +121,12 @@ class TestMT940Transaction(unittest.TestCase):
         for transaction, result in [
                 ('240325C-50000,00NMSCREV20240325AAAAAAA010O9902538776',
                     (datetime.date(2024, 3, 25), None, Decimal('-50000.00'),
-                        'NMSC', 'REV20240325AAAAAAA010O9902538776', '', None,
-                        '')),
+                        None, 'NMSC', 'REV20240325AAAAAAA010O9902538776', '',
+                        None, '')),
+                ('240325CS-50000,00NMSCREV20240325AAAAAAA010O9902538776',
+                    (datetime.date(2024, 3, 25), None, Decimal('-50000.00'),
+                        'S', 'NMSC', 'REV20240325AAAAAAA010O9902538776', '',
+                        None, '')),
                 ]:
             with self.subTest(transaction=transaction):
                 self.assertEqual(MT940._get_transaction(transaction), result)
