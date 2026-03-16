@@ -1,0 +1,39 @@
+[build-system]
+requires = ['hatchling >= 1', 'hatch-tryton']
+build-backend = 'hatchling.build'
+
+[project]
+name = 'mt940'
+dynamic = ['version', 'authors']
+requires-python = '>=3.5'
+maintainers = [
+    {name = "Tryton", email = "foundation@tryton.org"},
+    ]
+description = "A module to parse MT940 files"
+readme = 'README.rst'
+license = 'BSD-3-Clause'
+license-files = ['COPYRIGHT']
+keywords = ["MT940", "parser"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Topic :: Office/Business",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Utilities",
+    ]
+
+[project.urls]
+homepage = "https://www.tryton.org/"
+changelog = "https://code.tryton.org/mt940/-/blob/branch/default/CHANGELOG"
+forum = "https://discuss.tryton.org/tags/mt940"
+issues = "https://bugs.tryton.org/mt940"
+repository = "https://code.tryton.org/mt940"
+
+[tool.hatch.version]
+path = 'mt940/__init__.py'
+
+[tool.hatch.build]
+packages = ['mt940']
+
+[tool.hatch.metadata.hooks.tryton]
+copyright = 'COPYRIGHT'
